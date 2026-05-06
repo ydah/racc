@@ -200,33 +200,12 @@ module Racc
 
     Racc_Runtime_Version = ::Racc::VERSION
     Racc_Runtime_Core_Version_R = ::Racc::VERSION
-
-    begin
-      if Object.const_defined?(:RUBY_ENGINE) and RUBY_ENGINE == 'jruby'
-        require 'jruby'
-        require 'racc/cparse-jruby.jar'
-        com.headius.racc.Cparse.new.load(JRuby.runtime, false)
-      else
-        require 'racc/cparse'
-      end
-
-      unless new.respond_to?(:_racc_do_parse_c, true)
-        raise LoadError, 'old cparse.so'
-      end
-      if Racc_No_Extensions
-        raise LoadError, 'selecting ruby version of racc runtime core'
-      end
-
-      Racc_Main_Parsing_Routine    = :_racc_do_parse_c # :nodoc:
-      Racc_YY_Parse_Method         = :_racc_yyparse_c # :nodoc:
-      Racc_Runtime_Core_Version    = Racc_Runtime_Core_Version_C # :nodoc:
-      Racc_Runtime_Type            = 'c' # :nodoc:
-    rescue LoadError
-      Racc_Main_Parsing_Routine    = :_racc_do_parse_rb
-      Racc_YY_Parse_Method         = :_racc_yyparse_rb
-      Racc_Runtime_Core_Version    = Racc_Runtime_Core_Version_R
-      Racc_Runtime_Type            = 'ruby'
-    end
+    Racc_Runtime_Core_Version_C = ::Racc::VERSION
+    Racc_Runtime_Core_Id_C = 'pure-ruby compatibility shim'
+    Racc_Main_Parsing_Routine    = :_racc_do_parse_rb
+    Racc_YY_Parse_Method         = :_racc_yyparse_rb
+    Racc_Runtime_Core_Version    = Racc_Runtime_Core_Version_R
+    Racc_Runtime_Type            = 'ruby'
 
     def Parser.racc_runtime_type # :nodoc:
       Racc_Runtime_Type
@@ -273,11 +252,9 @@ module Racc
     #     def next_token
     #       @q.shift
     #     end
-    class_eval <<~RUBY, __FILE__, __LINE__ + 1
     def do_parse
-      #{Racc_Main_Parsing_Routine}(_racc_setup(), false)
+      _racc_do_parse_rb(_racc_setup(), false)
     end
-    RUBY
 
     # The method to fetch next token.
     # If you use #do_parse method, you must implement #next_token.
@@ -335,11 +312,9 @@ module Racc
     #
     # RECEIVER#METHOD_ID is a method to get next token.
     # It must 'yield' the token, which format is [TOKEN-SYMBOL, VALUE].
-    class_eval <<~RUBY, __FILE__, __LINE__ + 1
     def yyparse(recv, mid)
-      #{Racc_YY_Parse_Method}(recv, mid, _racc_setup(), false)
+      _racc_yyparse_rb(recv, mid, _racc_setup(), false)
     end
-    RUBY
 
     def _racc_yyparse_rb(recv, mid, arg, c_debug)
       action_table, action_check, action_default, action_pointer,
@@ -388,6 +363,16 @@ module Racc
           end
         end
       }
+    end
+
+    unless method_defined?(:_racc_do_parse_c) || private_method_defined?(:_racc_do_parse_c)
+      alias _racc_do_parse_c _racc_do_parse_rb
+      private :_racc_do_parse_c
+    end
+
+    unless method_defined?(:_racc_yyparse_c) || private_method_defined?(:_racc_yyparse_c)
+      alias _racc_yyparse_c _racc_yyparse_rb
+      private :_racc_yyparse_c
     end
 
     ###
