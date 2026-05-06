@@ -27,9 +27,9 @@ DESC
     "COPYING", "BSDL", "ChangeLog", "TODO",
     "README.ja.rdoc", "README.rdoc", "bin/racc",
     "lib/racc.rb", "lib/racc/compat.rb",
-    "lib/racc/debugflags.rb", "lib/racc/exception.rb",
-    "lib/racc/grammar.rb", "lib/racc/grammarfileparser.rb",
-    "lib/racc/info.rb", "lib/racc/iset.rb",
+    "lib/racc/cparse.rb", "lib/racc/debugflags.rb",
+    "lib/racc/exception.rb", "lib/racc/grammar.rb",
+    "lib/racc/grammarfileparser.rb", "lib/racc/info.rb", "lib/racc/iset.rb",
     "lib/racc/logfilegenerator.rb", "lib/racc/parser-text.rb",
     "lib/racc/parser.rb", "lib/racc/parserfilegenerator.rb",
     "lib/racc/sourcetext.rb",
@@ -50,13 +50,6 @@ DESC
   s.metadata["changelog_uri"] = "#{s.homepage}/releases"
 
   if RUBY_PLATFORM =~ /java/
-    s.files << 'lib/java/racc/cparse-jruby.jar'
     s.platform = 'java'
-  else
-    s.extensions = ["ext/racc/cparse/extconf.rb"]
-    s.files.concat(%w[
-      ext/racc/cparse/cparse.c
-      ext/racc/cparse/extconf.rb
-    ])
   end
 end

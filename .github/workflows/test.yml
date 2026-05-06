@@ -49,3 +49,6 @@ jobs:
     - run: bundle install --jobs 4 --retry 3
     - run: rake test
     - run: rake build
+    - run: ruby -Ilib -e 'require "racc/parser"; abort Racc::Parser.racc_runtime_type unless Racc::Parser.racc_runtime_type == "ruby"'
+    - run: ruby -Ilib -e 'require "racc/cparse"; require "racc/parser"; abort Racc::Parser.racc_runtime_type unless Racc::Parser.racc_runtime_type == "ruby"'
+    - run: ruby -rrubygems/package -e 'gem = Dir["pkg/racc-*.gem"].first or abort "missing gem"; spec = Gem::Package.new(gem).spec; abort "extensions: #{spec.extensions.inspect}" unless spec.extensions.empty?; abort "ext/racc packaged" if spec.files.any? { |file| file.start_with?("ext/racc") }'

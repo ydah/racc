@@ -26,11 +26,6 @@ module Racc
 
     LIB_DIR = File.expand_path("../../lib", __FILE__)
 
-    INC = [
-      File.join(PROJECT_DIR, 'lib'),
-      File.join(PROJECT_DIR, 'ext'),
-    ].join(':')
-
     def setup
       @TEMP_DIR = Dir.mktmpdir("racc")
       @OUT_DIR  = File.join(@TEMP_DIR, 'out')
