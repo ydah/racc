@@ -17,6 +17,12 @@
 
     $ gem install racc
 
+== Runtime
+
+  Racc no longer ships a native parser runtime. The runtime is pure Ruby.
+  The old <code>require "racc/cparse"</code> path is kept as a compatibility
+  shim for existing code.
+
 == Testing Racc
 
   Racc comes with simple calculator. To compile this, on shell:
@@ -34,9 +40,10 @@
 == Release flow
 
 * Update VERSION number of these files
-  * <code>RACC_VERSION</code> in "ext/racc/com/headius/racc/Cparse.java"
   * <code>VERSION</code> in "lib/racc/info.rb"
-* Release as a gem by <code>rake release</code> with CRuby and JRuby because Racc gem provides 2 packages
+* Run <code>bundle exec rake test</code>
+* Run <code>bundle exec rake build</code>
+* Release as a gem by <code>rake release</code>. During the transition, release with CRuby and JRuby if maintaining the Java platform package.
 * Create new release on {GitHub}[https://github.com/ruby/racc/releases]
 
 == License

@@ -17,6 +17,12 @@
 
     $ gem install racc
 
+== ランタイム
+
+  Racc は native parser runtime を同梱しません。runtime は pure Ruby です。
+  既存コードとの互換性のため、古い <code>require "racc/cparse"</code> は
+  shim として残しています。
+
 == テスト
 
   sample/ 以下にいくつか Racc の文法ファイルのサンプルが用意
@@ -55,4 +61,3 @@
                                          青木峰郎(あおきみねろう)
                                               aamine@loveruby.net
                                             http://i.loveruby.net
-
